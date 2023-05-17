@@ -1,2 +1,3 @@
 # Juego-TFG
-El juego entero
+Todos los archivos de Código del juego
+
