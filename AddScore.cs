@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class AddScore : MonoBehaviour
 {
+    #region variables
     private int totalScore = 0;
     private bool completado = false;
     private bool sonando = false;
@@ -17,11 +18,11 @@ public class AddScore : MonoBehaviour
     public AudioSource moneda;
     public AudioSource meta;
 
-
     DatabaseReference reference;
     String connection = "https://bbdd-tfg-usuarios-default-rtdb.europe-west1.firebasedatabase.app/";
     FirebaseApp app;
-
+    #endregion
+    // Inicializa la conexión a la BBDD
     void Start()
     {
         AppOptions appOptions = new AppOptions();
@@ -32,14 +33,17 @@ public class AddScore : MonoBehaviour
 
     private void Update()
     {
+        // Si se completa el nivel, carga la pantalla de puntuaciones
         if (completado)
         {
             StartCoroutine(pausaYCarga(1.5f));
         }
     }
 
+    
     private void OnTriggerEnter(Collider other)
     {
+        // Cuando colisiona una moneda, suma la puntuación y la destruye 
         if (other.gameObject.tag.Equals("Coin"))
         {
             Destroy(other.gameObject);
@@ -60,6 +64,7 @@ public class AddScore : MonoBehaviour
             scoreTMP.text = puntuacionINT.ToString();
             moneda.Play();
         }
+        // Cuando colisiona con la meta, reproduce un sonido y acutaliza la puntuación en la BBDD
         else if (other.gameObject.tag.Equals("Finish"))
         {
             if (!sonando)
@@ -75,6 +80,7 @@ public class AddScore : MonoBehaviour
         }
     }
 
+    // Actualiza la puntuación del usuario en la BBDD
     public IEnumerator actualizarPuntuacion(string username, int nuevaPuntuacion)
     {
         var userReference = reference.Child("users").Child("new_user_" + username).Child("score");
@@ -85,7 +91,6 @@ public class AddScore : MonoBehaviour
             if (task.IsCanceled || task.IsFaulted)
             {
                 Debug.LogError($"Failed to update user score in Firebase: {task.Exception}\n For user {username}");
-
                 return;
             }
 
@@ -94,6 +99,7 @@ public class AddScore : MonoBehaviour
         });
     }
 
+    // Espera un cierto tiempo para asegurar la modificación y el sonido y carga la tabla de puntuaciones
     private IEnumerator pausaYCarga(float tiempo)
     {
         yield return new WaitForSeconds(tiempo);
@@ -103,6 +109,7 @@ public class AddScore : MonoBehaviour
         SceneManager.LoadScene(4);
     }
 
+    // Espera que termine la reproducción del sonido 
     private IEnumerator EsperarFinSonido(AudioSource audioSource)
     {
         yield return new WaitForSeconds(audioSource.clip.length);

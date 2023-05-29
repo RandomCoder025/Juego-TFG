@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MovementMKII : MonoBehaviour
 {
+    #region variables
     [Header("Movement")] 
     private float moveSpeed;
 
@@ -33,6 +34,7 @@ public class MovementMKII : MonoBehaviour
     Vector3 moveDirection;
 
     Rigidbody rb;
+    #endregion
 
     private void Start()
     {
@@ -58,12 +60,13 @@ public class MovementMKII : MonoBehaviour
             rb.drag = 0;
     }
 
+    // Captura las entradas de teclas del jugador
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // when to jump
+        // Verifica si se puede saltar
         if (Input.GetKey(jumpKey) && readyToJump && grounded)
         {
             salto.Play();
@@ -75,22 +78,24 @@ public class MovementMKII : MonoBehaviour
         }
     }
 
+    // Mueve al jugador
     private void MovePlayer()
     {
-        // calculate movement direction
+        // Calcula la dirección del movimiento en base a la orientación del GameObject
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        // on ground
+        // Si está en el suelo, aplica fuerza para mover al jugador en base a la dirección
         if (grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-        // en el aire
+        // Si está en el aire, aplica fuerza con un multiplicador para el movimiento en el aire
         else if (!grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
+    // Controla la velocidad de movimiento
     private void SpeedControl()
-    {
-        
+    {   
+        // Permite correr al personaje
         if (Input.GetKey(KeyCode.LeftShift))
         {
             moveSpeed = sprintSpeed; 
@@ -102,6 +107,7 @@ public class MovementMKII : MonoBehaviour
 
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         
+        // Limita la velocidad si excede la velocidad máxima establecida
         if (flatVel.magnitude > moveSpeed)
         {
             Vector3 limitedVel = flatVel.normalized * moveSpeed;
@@ -109,14 +115,17 @@ public class MovementMKII : MonoBehaviour
         }
     }
 
+    // Realiza el salto
     private void Jump()
     {
-        // reset y velocity
+        // Resetea la velocidad en el eje Y
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
+        // Aplica una fuerza hacia arriba para ejecutar el salto
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
+    // Resetea la capacidad de saltar
     private void ResetJump()
     {
         readyToJump = true;

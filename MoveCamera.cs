@@ -5,7 +5,8 @@ using UnityEngine;
 public class MoveCamera : MonoBehaviour
 {
     public Transform CameraPosition;
-    // Update is called once per frame
+    
+    // Mueve este componente a la posición de los ojos del personaje 
     void Update()
     {
         this.transform.position = CameraPosition.position;
