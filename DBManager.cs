@@ -133,7 +133,8 @@ public class DBManager : MonoBehaviour
                 User user = JsonUtility.FromJson<User>(json);
                 userList.Add(user);
             }
-
+             userList.Sort();
+            userList.Reverse();
             onCallBack.Invoke(userList);
         }
     }

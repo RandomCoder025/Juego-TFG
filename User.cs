@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class User
+public class User : IComparable<User>
 {
-    public String name;
-    public String password;
+    public string name;
+    public string password;
     public int score;
 
     public User(string name, string password, int score)
@@ -14,5 +14,10 @@ public class User
         this.name = name;
         this.password = password;
         this.score = score;
+    }
+
+    public int CompareTo(User other)
+    {
+        return score.CompareTo(other.score);
     }
 }
